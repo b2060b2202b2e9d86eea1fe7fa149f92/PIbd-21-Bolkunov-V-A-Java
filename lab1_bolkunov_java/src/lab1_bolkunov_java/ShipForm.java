@@ -14,46 +14,37 @@ import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.Button;
 
-public class ShipForm
-{
-	private JFrame frame;
-	
-	private JPanel shipPanel;
+public class ShipForm {
+    private JFrame frame;
 
-	public static void main(String[] args)
-	{
-		EventQueue.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				try
-				{
-					ShipForm window = new ShipForm();
-					window.frame.setVisible(true);
-				} 
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+    private JPanel shipPanel;
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    ShipForm window = new ShipForm();
+                    window.frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
 
-	public ShipForm()
-	{
-		initialize();
-	}
+    public ShipForm() {
+        initialize();
+    }
 
-	private void initialize()
-	{
-		frame = new JFrame();
-		frame.setBounds(100, 100, 1200, 800);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		shipPanel = new ShipPanel();
-		shipPanel.setBounds(100, 100, 1200, 800);
-		frame.getContentPane().add(shipPanel, BorderLayout.CENTER);
-	}
+    private void initialize() {
+        frame = new JFrame();
+        frame.setBounds(100, 100, 1200, 800);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        shipPanel = new ShipPanel();
+        shipPanel.setBounds(100, 100, 1200, 800);
+        frame.getContentPane().add(shipPanel, BorderLayout.CENTER);
+    }
 
 }
