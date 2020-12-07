@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/src/lab1_bolkunov_java/PipeCount.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/lab1_bolkunov_java/Pipes.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/lab1_bolkunov_java/ShipPanel.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/lab1_bolkunov_java/Transport/PipeCount.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/lab1_bolkunov_java/Transport/Pipes.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/src/lab1_bolkunov_java/UI/ShipPanel.java" charset="windows-1251" />
+    <file url="PROJECT" charset="windows-1251" />
   </component>
 </project>
