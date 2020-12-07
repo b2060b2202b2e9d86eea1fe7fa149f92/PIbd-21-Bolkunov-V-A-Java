@@ -4,7 +4,8 @@ import lab1_bolkunov_java.Transport.MotorShip;
 
 import java.awt.*;
 
-public interface IExtension {
+public interface IExtension //ИнтерДоп
+{
 
     void setExtensionCount(int count);
 
