@@ -8,13 +8,11 @@ public class Ship extends Vehicle {
     private static final int defaultShipHeight = 120;
 
     protected final int shipWidth;
-
     public int getShipWidth() {
         return shipWidth;
     }
 
     protected final int shipHeight;
-
     public int getShipHeight() {
         return shipHeight;
     }

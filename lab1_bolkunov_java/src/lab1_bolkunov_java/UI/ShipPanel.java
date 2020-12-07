@@ -43,27 +43,6 @@ public class ShipPanel extends JPanel {
                 add(panelHolder[row][clmn]);
             }
 
-        //Кнопка для создания корабля
-        createMotorShipButton = new JButton("Создать корабль");
-        createMotorShipButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                createShip();
-            }
-        });
-        panelHolder[0][0].add(createMotorShipButton);
-
-
-        //Кнопка для создания теплохода
-        createMotorShipButton = new JButton("Создать теплоход");
-        createMotorShipButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                createMotorShip();
-            }
-        });
-        panelHolder[0][1].add(createMotorShipButton);
-
         //Кнопка для движения вниз
         moveDownButton = new JButton();
         moveDownButton.setIcon(getScaledImageIcon(downButtonIconPath));
@@ -109,7 +88,7 @@ public class ShipPanel extends JPanel {
         panelHolder[gridRowCount - 1][gridColumnCount - 1].add(moveRightButton);
 
         //Крутилка для выбора улучшения
-        SpinnerListModel spinnerExtensionModel = new SpinnerListModel(new IExtension[]{new SmallPipesExtension(1), new HugePipesExtension(1), new PipesExtension(1)});
+        SpinnerListModel spinnerExtensionModel = new SpinnerListModel(new IExtension[] {new SmallPipesExtension(1), new PipesExtension(1), new HugePipesExtension(1)});
         transportExtensionSpinner = new JSpinner(spinnerExtensionModel);
         transportExtensionSpinner.addChangeListener(new ChangeListener() {
             @Override
@@ -122,7 +101,7 @@ public class ShipPanel extends JPanel {
             }
         });
         transportExtensionSpinner.setEnabled(false);
-        transportExtensionSpinner.setPreferredSize(new Dimension(80, 20));
+        transportExtensionSpinner.setPreferredSize(new Dimension(80,20));
         panelHolder[0][gridColumnCount - 1].add(transportExtensionSpinner);
 
         //Крутилка для выбора кол-ва
@@ -138,7 +117,7 @@ public class ShipPanel extends JPanel {
             }
         });
         transportExtensionCountSpinner.setEnabled(false);
-        transportExtensionCountSpinner.setPreferredSize(new Dimension(80, 20));
+        transportExtensionCountSpinner.setPreferredSize(new Dimension(80,20));
         panelHolder[1][gridColumnCount - 1].add(transportExtensionCountSpinner);
     }
 
@@ -176,15 +155,25 @@ public class ShipPanel extends JPanel {
         this.repaint();
     }
 
+    public void setShip(ITransport ship){
+        this.transport = ship;
+        transport.setPosition(200 + rnd.nextInt(100), 200 + rnd.nextInt(100), this.getWidth(), this.getHeight());
+        if(transport instanceof MotorShip){
+            ((MotorShip) transport).setExtension(getCurrentSelectedExtension());
+            ((MotorShip) transport).setExtensionCount(IExtension.convertExtensionCountToInt(getCurrentSelectedPipeCount()));
+        }
+        this.repaint();
+    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         if (transport != null) {
             transport.drawTransport(g);
-            if (transport instanceof MotorShip) {
+            if(transport instanceof MotorShip){
                 transportExtensionCountSpinner.setEnabled(true);
                 transportExtensionSpinner.setEnabled(true);
-            } else {
+            }else{
                 transportExtensionCountSpinner.setEnabled(false);
                 transportExtensionSpinner.setEnabled(false);
             }

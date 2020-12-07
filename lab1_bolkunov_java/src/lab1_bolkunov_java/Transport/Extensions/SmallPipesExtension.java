@@ -64,7 +64,7 @@ public class SmallPipesExtension implements IExtension {
                     g.fillOval(boatPolygonPointsX[2] - pipeRadius, boatPolygonPointsY[2] - pipeRadius, pipeRadius * 2, pipeRadius * 2);
                     g.setColor(Color.black);
                     g.drawOval(boatPolygonPointsX[2] - pipeRadius, boatPolygonPointsY[2] - pipeRadius, pipeRadius * 2, pipeRadius * 2);
-                    if (transport.getSmoke()) {
+                    if(transport.getSmoke()) {
                         drawSmoke(g, boatPolygonPointsX[2], boatPolygonPointsY[2]);
                     }
                     break;
@@ -76,7 +76,7 @@ public class SmallPipesExtension implements IExtension {
                     g.setColor(Color.black);
                     g.drawOval(boatPolygonPointsX[2] - pipeRadius, boatPolygonPointsY[2] - pipeRadius, pipeRadius * 2, pipeRadius * 2);
                     g.drawOval(boatPolygonPointsX[5] - pipeRadius, boatPolygonPointsY[5] - pipeRadius, pipeRadius * 2, pipeRadius * 2);
-                    if (transport.getSmoke()) {
+                    if(transport.getSmoke()) {
                         drawSmoke(g, boatPolygonPointsX[2], boatPolygonPointsY[2]);
                         drawSmoke(g, boatPolygonPointsX[5], boatPolygonPointsY[5]);
                     }
@@ -92,7 +92,7 @@ public class SmallPipesExtension implements IExtension {
                     for (int i = 0; i < boatPolygonPointsX.length; i += 2) {
                         g.drawOval(boatPolygonPointsX[i] - pipeRadius, boatPolygonPointsY[i] - pipeRadius, pipeRadius * 2, pipeRadius * 2);
                     }
-                    if (transport.getSmoke()) {
+                    if(transport.getSmoke()) {
                         for (int i = 0; i < boatPolygonPointsX.length; i += 2) {
                             drawSmoke(g, boatPolygonPointsX[i], boatPolygonPointsY[i]);
                         }
@@ -110,7 +110,7 @@ public class SmallPipesExtension implements IExtension {
                     g.drawOval(boatPolygonPointsX[1] - pipeRadius, boatPolygonPointsY[1] - pipeRadius, pipeRadius * 2, pipeRadius * 2);
                     g.drawOval(boatPolygonPointsX[3] - pipeRadius, boatPolygonPointsY[3] - pipeRadius, pipeRadius * 2, pipeRadius * 2);
                     g.drawOval(boatPolygonPointsX[4] - pipeRadius, boatPolygonPointsY[4] - pipeRadius, pipeRadius * 2, pipeRadius * 2);
-                    if (transport.getSmoke()) {
+                    if(transport.getSmoke()) {
                         drawSmoke(g, boatPolygonPointsX[0], boatPolygonPointsY[0]);
                         drawSmoke(g, boatPolygonPointsX[1], boatPolygonPointsY[1]);
                         drawSmoke(g, boatPolygonPointsX[3], boatPolygonPointsY[3]);
@@ -122,7 +122,7 @@ public class SmallPipesExtension implements IExtension {
         }
     }
 
-    private void drawSmoke(Graphics g, int pipePointX, int pipePointY) {
+    private void drawSmoke(Graphics g,int pipePointX,int pipePointY){
         int despertionRadius = 15;
         for (int j = 0; j < 5 + rnd.nextInt(10); j++) {
             int rad = 2 + rnd.nextInt(10);

@@ -53,7 +53,7 @@ public class MotorShip extends Ship {
         this.fire = fire;
     }
 
-    public void setExtension(IExtension extension) {
+    public void setExtension(IExtension extension){
         this.extension = extension;
     }
 
@@ -96,13 +96,13 @@ public class MotorShip extends Ship {
                     shipWidth - helipadSidesOffset * 2);
         }
 
-        //PIPES AND SMOKE, PATTERNS AND PILLARS
-        if (extension != null) {
+        //PIPES (WITH SMOKE), PATTERNS AND PILLARS
+        if(extension != null) {
             extension.Draw(g, this);
         }
 
         //SMOKE WITHOUT PIPES
-        if (smoke && extension == null) {
+        if (smoke && extension != null && !(extension instanceof PipesExtension)) {
             int despertionRadius = 15;
             for (int j = 0; j < 5 + rnd.nextInt(10); j++) {
                 int rad = 2 + rnd.nextInt(10);
