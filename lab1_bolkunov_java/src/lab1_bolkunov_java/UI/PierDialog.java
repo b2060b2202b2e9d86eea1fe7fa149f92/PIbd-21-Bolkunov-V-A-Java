@@ -1,18 +1,22 @@
 package lab1_bolkunov_java.UI;
 
+import lab1_bolkunov_java.Transport.*;
 import lab1_bolkunov_java.Transport.Extensions.IExtension;
-import lab1_bolkunov_java.Transport.ITransport;
-import lab1_bolkunov_java.Transport.MotorShip;
-import lab1_bolkunov_java.Transport.Pier;
-import lab1_bolkunov_java.Transport.Ship;
+import lab1_bolkunov_java.Transport.Extensions.PipesExtension;
 
 import javax.swing.*;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
+import java.util.Stack;
 
 public class PierDialog extends JFrame {
-    private Random rnd = new Random();
+    private final Random rnd = new Random();
+    private final PierCollection pierCollection;
+    private Stack<ITransport> extractedTransport;
 
     private JPanel mainPanel;
     private JPanel pierPanel;
@@ -21,17 +25,23 @@ public class PierDialog extends JFrame {
     private JSpinner pierPlaceSpinner;
     private JButton takeShipButton;
     private JPanel controlsPanel;
+    private JButton createPierButton;
+    private JButton removePierButton;
+    private JList pierListBox;
+    private JTextField pierNameTextField;
+    private JButton drawShipButton;
 
     public PierDialog() {
         $$$setupUI$$$();
         setContentPane(mainPanel);
+        //setModal(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         createShipButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 Color mainColor = JColorChooser.showDialog(mainPanel, "Выберете основной цвет", Color.pink);
-                ITransport transport = new Ship(100 + rnd.nextInt(200), 1000 + rnd.nextInt(1000), mainColor);
+                Vehicle transport = new Ship(100 + rnd.nextInt(200), 1000 + rnd.nextInt(1000), mainColor);
                 if (((PierPanel) pierPanel).getPier().add(transport)) {
                     ((PierPanel) pierPanel).redraw();
                 } else {
@@ -45,7 +55,7 @@ public class PierDialog extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 Color mainColor = JColorChooser.showDialog(mainPanel, "Выберете основной цвет", Color.pink);
                 Color additionalColor = JColorChooser.showDialog(mainPanel, "Выберете дополнительный цвет", Color.blue);
-                ITransport transport = new MotorShip(100 + rnd.nextInt(200), 1000 + rnd.nextInt(1000), mainColor, additionalColor, true, true, true, true);
+                Vehicle transport = new MotorShip(100 + rnd.nextInt(200), 1000 + rnd.nextInt(1000), mainColor, additionalColor, true, true, true, true);
                 if (((PierPanel) pierPanel).getPier().add(transport)) {
                     ((PierPanel) pierPanel).redraw();
                 } else {
@@ -54,16 +64,30 @@ public class PierDialog extends JFrame {
             }
         });
 
+        extractedTransport = new Stack<ITransport>();
+
         takeShipButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 ITransport ship = ((PierPanel) pierPanel).getPier().substract((int) pierPlaceSpinner.getValue());
                 if (ship != null) {
-                    ShipForm.drawPanel(ship);
+                    extractedTransport.push(ship);
                 } else {
                     showDialog("Данное парковочное место свободно либо не существует");
                 }
                 ((PierPanel) pierPanel).redraw();
+            }
+        });
+
+        drawShipButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (extractedTransport.empty()) {
+                    showDialog("Извлеченные корабли отсутствуют");
+                } else {
+                    ITransport extractedShip = extractedTransport.pop();
+                    ShipForm.drawPanel(extractedShip);
+                }
             }
         });
 
@@ -73,7 +97,6 @@ public class PierDialog extends JFrame {
         this.addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent windowEvent) {
-                ((PierPanel) pierPanel).resetPier();
                 ((PierPanel) pierPanel).redraw();
             }
 
@@ -103,6 +126,40 @@ public class PierDialog extends JFrame {
             }
 
         });
+
+        pierCollection = new PierCollection(pierPanel.getPreferredSize().width, pierPanel.getPreferredSize().height);
+
+        pierListBox.setListData(pierCollection.getKeys());
+
+        pierListBox.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                String selectedValue = (String) pierListBox.getSelectedValue();
+                ((PierPanel) pierPanel).setPier(pierCollection.getPier(selectedValue));
+                ((PierPanel) pierPanel).repaint();
+            }
+        });
+
+        createPierButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (pierNameTextField.getText() != "" && pierCollection.addPier(pierNameTextField.getText())) {
+                    pierListBox.setListData(pierCollection.getKeys());
+                }
+            }
+        });
+
+        removePierButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (pierCollection.getPier((String) pierListBox.getSelectedValue()) != null) {
+                    pierCollection.removePier((String) pierListBox.getSelectedValue());
+                    pierListBox.setListData(pierCollection.getKeys());
+                    ((PierPanel) pierPanel).setPier(null);
+                    ((PierPanel) pierPanel).repaint();
+                }
+            }
+        });
     }
 
     private void showDialog(String text) {
@@ -131,20 +188,20 @@ public class PierDialog extends JFrame {
         pierPanel.setPreferredSize(new Dimension(1000, 800));
         mainPanel.add(pierPanel, BorderLayout.CENTER);
         controlsPanel = new JPanel();
-        controlsPanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
+        controlsPanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(6, 1, new Insets(0, 0, 0, 0), -1, -1));
         controlsPanel.setPreferredSize(new Dimension(200, 800));
         mainPanel.add(controlsPanel, BorderLayout.EAST);
         createMotorShipButton = new JButton();
         createMotorShipButton.setText("Создать теплоход");
-        controlsPanel.add(createMotorShipButton, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        controlsPanel.add(createMotorShipButton, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         createShipButton = new JButton();
         createShipButton.setText("Создать корабль");
-        controlsPanel.add(createShipButton, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        controlsPanel.add(createShipButton, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final com.intellij.uiDesigner.core.Spacer spacer1 = new com.intellij.uiDesigner.core.Spacer();
-        controlsPanel.add(spacer1, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        controlsPanel.add(spacer1, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
-        controlsPanel.add(panel1, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
+        controlsPanel.add(panel1, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setHorizontalAlignment(0);
         label1.setHorizontalTextPosition(0);
@@ -159,6 +216,27 @@ public class PierDialog extends JFrame {
         takeShipButton.setLabel("Забрать корабль");
         takeShipButton.setText("Забрать корабль");
         panel1.add(takeShipButton, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        drawShipButton = new JButton();
+        drawShipButton.setText("Нарисовать корабль");
+        panel1.add(drawShipButton, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final com.intellij.uiDesigner.core.Spacer spacer2 = new com.intellij.uiDesigner.core.Spacer();
+        controlsPanel.add(spacer2, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final JPanel panel2 = new JPanel();
+        panel2.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(5, 1, new Insets(0, 0, 0, 0), -1, -1));
+        controlsPanel.add(panel2, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label3 = new JLabel();
+        label3.setText("Причалы:");
+        panel2.add(label3, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        createPierButton = new JButton();
+        createPierButton.setText("Создать причал");
+        panel2.add(createPierButton, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        removePierButton = new JButton();
+        removePierButton.setText("Удалить причал");
+        panel2.add(removePierButton, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        pierListBox = new JList();
+        panel2.add(pierListBox, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
+        pierNameTextField = new JTextField();
+        panel2.add(pierNameTextField, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     }
 
     /**

@@ -6,25 +6,24 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PierPanel extends JPanel {
-    private Pier<ITransport, IExtension> pier;
+    private Pier<Vehicle, IExtension> pier;
 
     public PierPanel(){
         super();
-        resetPier();
     }
 
-    public void resetPier(){
-        pier = new Pier<ITransport, IExtension>(this.getWidth(), this.getHeight());
-    }
-
-    public Pier<ITransport, IExtension> getPier() {
+    public Pier<Vehicle, IExtension> getPier() {
         return pier;
     }
+
+    public void setPier(Pier<Vehicle, IExtension> pier) { this.pier = pier; }
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        pier.draw(g);
+        if(pier != null){
+            pier.draw(g);
+        }
     }
 
     public void redraw(){

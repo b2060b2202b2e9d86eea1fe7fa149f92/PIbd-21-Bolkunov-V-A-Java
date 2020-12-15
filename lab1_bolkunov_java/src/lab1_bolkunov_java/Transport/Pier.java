@@ -1,11 +1,14 @@
 package lab1_bolkunov_java.Transport;
 
+import jdk.jshell.spi.ExecutionControl;
 import lab1_bolkunov_java.Transport.Extensions.IExtension;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Pier<T1 extends ITransport, T2 extends IExtension> {
-    private final T1[] places;
+    private final ArrayList<T1> places;
+    private final int maxSize;
 
     private final int pictureWidth;
     private final int pictureHeight;
@@ -20,64 +23,60 @@ public class Pier<T1 extends ITransport, T2 extends IExtension> {
         int widthPlaceCount = pictureWidth / placeSizeWidth;
         int heightPlaceCount = pictureHeight / placeSizeHeight;
 
-        places = (T1[]) new ITransport[widthPlaceCount * heightPlaceCount];
+        places = new ArrayList<T1>();
+        maxSize = widthPlaceCount * heightPlaceCount;
     }
 
     //OPERATORS
 
     //'+' - operator
     public boolean add(T1 ship) {
-        for (int i = 0; i < places.length; i++) {
-            if (places[i] == null) {
-                places[i] = ship;
-                int width = pictureWidth / placeSizeWidth;
-                int height = pictureHeight / placeSizeHeight;
-                int column = i / height;
-                int row = i % height;
-                ship.setPosition(column * placeSizeWidth + placeSizeWidth / 2, row * placeSizeHeight + placeSizeHeight / 2, pictureWidth, pictureHeight);
-                return true;
-            }
+        if (places.size() < maxSize) {
+            places.add(ship);
+            int width = pictureWidth / placeSizeWidth;
+            int height = pictureHeight / placeSizeHeight;
+            int column = places.indexOf(ship) / height;
+            int row = places.indexOf(ship) % height;
+            ship.setPosition(column * placeSizeWidth + placeSizeWidth / 2, row * placeSizeHeight + placeSizeHeight / 2, pictureWidth, pictureHeight);
+            return true;
         }
         return false;
     }
 
     //'-' - operator
-    public T1 substract( int index) {
-        if (index >= 0 && index < places.length) {
-            var res = places[index];
-            places[index] = null;
+    public T1 substract(int index) {
+        if (index >= 0 && index < places.size()) {
+            T1 res = places.get(index);
+            places.remove(index);
             return res;
         }
         return null;
     }
 
-    private int countOwnedPlaces() {
-        int res = 0;
-        for (int i = 0; i < places.length; i++) {
-            if (places[i] != null) {
-                res++;
-            }
-        }
-        return res;
-    }
-
     //'>' - operator
     public boolean more(int count) {
-        return countOwnedPlaces() > count;
+        return places.size() > count;
     }
 
     //'<' - operator
     public boolean less(int count) {
-        return countOwnedPlaces() < count;
+        return places.size() < count;
+    }
+
+    public T1 getTransport(int index) {
+        if(places.size() > index)
+            return places.get(index);
+        else
+            return null;
     }
 
     //DRAWING
 
     public void draw(Graphics g) {
         drawMarking(g);
-        for (int i = 0; i < places.length; i++) {
-            if (places[i] != null)
-                places[i].drawTransport(g);
+        for (int i = 0; i < places.size(); i++) {
+            if (places.get(i) != null)
+                places.get(i).drawTransport(g);
         }
     }
 
