@@ -20,7 +20,6 @@ public class PierDialog extends JFrame {
 
     private JPanel mainPanel;
     private JPanel pierPanel;
-    private JButton createMotorShipButton;
     private JButton createShipButton;
     private JSpinner pierPlaceSpinner;
     private JButton takeShipButton;
@@ -40,27 +39,23 @@ public class PierDialog extends JFrame {
         createShipButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                Color mainColor = JColorChooser.showDialog(mainPanel, "Выберете основной цвет", Color.pink);
-                Vehicle transport = new Ship(100 + rnd.nextInt(200), 1000 + rnd.nextInt(1000), mainColor);
-                if (((PierPanel) pierPanel).getPier().add(transport)) {
-                    ((PierPanel) pierPanel).redraw();
-                } else {
-                    showDialog("Причал переполнен");
-                }
-                ((PierPanel) pierPanel).redraw();
-            }
-        });
-        createMotorShipButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                Color mainColor = JColorChooser.showDialog(mainPanel, "Выберете основной цвет", Color.pink);
-                Color additionalColor = JColorChooser.showDialog(mainPanel, "Выберете дополнительный цвет", Color.blue);
-                Vehicle transport = new MotorShip(100 + rnd.nextInt(200), 1000 + rnd.nextInt(1000), mainColor, additionalColor, true, true, true, true);
-                if (((PierPanel) pierPanel).getPier().add(transport)) {
-                    ((PierPanel) pierPanel).redraw();
-                } else {
-                    showDialog("Причал переполнен");
-                }
+                ShipConfigDialog configDialog = new ShipConfigDialog(new IShipAction() {
+                    @Override
+                    public void Action(Vehicle ship) {
+                        if (ship != null) {
+                            if (((PierPanel) pierPanel).getPier().add(ship)) {
+                                ((PierPanel) pierPanel).redraw();
+                            } else {
+                                showDialog("Причал переполнен");
+                            }
+                        } else {
+                            showDialog("Корабль не был создан");
+                        }
+                        ((PierPanel) pierPanel).redraw();
+                    }
+                });
+                configDialog.pack();
+                configDialog.setVisible(true);
             }
         });
 
@@ -188,20 +183,17 @@ public class PierDialog extends JFrame {
         pierPanel.setPreferredSize(new Dimension(1000, 800));
         mainPanel.add(pierPanel, BorderLayout.CENTER);
         controlsPanel = new JPanel();
-        controlsPanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(6, 1, new Insets(0, 0, 0, 0), -1, -1));
+        controlsPanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(5, 1, new Insets(0, 0, 0, 0), -1, -1));
         controlsPanel.setPreferredSize(new Dimension(200, 800));
         mainPanel.add(controlsPanel, BorderLayout.EAST);
-        createMotorShipButton = new JButton();
-        createMotorShipButton.setText("Создать теплоход");
-        controlsPanel.add(createMotorShipButton, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         createShipButton = new JButton();
         createShipButton.setText("Создать корабль");
         controlsPanel.add(createShipButton, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final com.intellij.uiDesigner.core.Spacer spacer1 = new com.intellij.uiDesigner.core.Spacer();
-        controlsPanel.add(spacer1, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        controlsPanel.add(spacer1, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
-        controlsPanel.add(panel1, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        controlsPanel.add(panel1, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setHorizontalAlignment(0);
         label1.setHorizontalTextPosition(0);
