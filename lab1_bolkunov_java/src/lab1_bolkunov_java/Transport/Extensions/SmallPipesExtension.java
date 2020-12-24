@@ -25,6 +25,10 @@ public class SmallPipesExtension implements IExtension {
         extensionCount = IExtension.convertIntToExtensionCount(count);
     }
 
+    public ExtensionCount getExtensionCount(){
+        return extensionCount;
+    }
+
     public void Draw(Graphics g, MotorShip transport) {
         if (extensionCount != null) {
             int[] boatPolygonPointsX = new int[6];

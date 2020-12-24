@@ -4,15 +4,18 @@ import java.awt.*;
 import java.util.Random;
 
 public class Ship extends Vehicle {
-    private static final int defaultShipWidth = 50;
-    private static final int defaultShipHeight = 120;
+
+    protected static final int defaultShipWidth = 50;
+    protected static final int defaultShipHeight = 120;
 
     protected final int shipWidth;
+
     public int getShipWidth() {
         return shipWidth;
     }
 
     protected final int shipHeight;
+
     public int getShipHeight() {
         return shipHeight;
     }
@@ -21,6 +24,15 @@ public class Ship extends Vehicle {
 
     public Direction getLastDirection() {
         return lastDirection;
+    }
+
+    public Ship(String str) {
+        String[] params = str.split(Character.toString(separator));
+        this.maxSpeed = Integer.parseInt(params[0]);
+        this.weight = Float.parseFloat(params[1]);
+        this.mainColor = new Color(Integer.parseInt(params[2]));
+        this.shipWidth = defaultShipWidth;
+        this.shipHeight = defaultShipHeight;
     }
 
     public Ship(int maxSpeed, float weight, Color mainColor) {
@@ -104,5 +116,11 @@ public class Ship extends Vehicle {
         g.fillPolygon(boatPolygonPointsX, boatPolygonPointsY, boatPolygonPointsX.length);
         g.setColor(Color.black);
         g.drawPolygon(boatPolygonPointsX, boatPolygonPointsY, boatPolygonPointsX.length);
+    }
+
+    @Override
+    public String toString() {
+        return Integer.toString(maxSpeed) + separator + Float.toString(weight) +
+                separator + Integer.toString(mainColor.getRGB());
     }
 }

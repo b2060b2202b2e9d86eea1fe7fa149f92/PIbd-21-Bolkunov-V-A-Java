@@ -10,6 +10,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.Random;
 import java.util.Stack;
 
@@ -29,6 +30,10 @@ public class PierDialog extends JFrame {
     private JList pierListBox;
     private JTextField pierNameTextField;
     private JButton drawShipButton;
+    private JMenuItem saveMenuItem;
+    private JMenuItem loadMenuItem;
+    private JMenuItem saveSingleMenuItem;
+    private JMenuItem loadSIngleMenuItem;
 
     public PierDialog() {
         $$$setupUI$$$();
@@ -155,6 +160,68 @@ public class PierDialog extends JFrame {
                 }
             }
         });
+
+        saveMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFileChooser fc = new JFileChooser();
+                fc.setDialogTitle("Сохранить причал");
+                if (fc.showSaveDialog(mainPanel) == JFileChooser.APPROVE_OPTION) {
+                    if (pierCollection.saveAllData(fc.getSelectedFile().getAbsolutePath())) {
+                        showDialog("Сохранение успешно");
+                    } else {
+                        showDialog("Сохранение не удалось");
+                    }
+                }
+            }
+        });
+
+        loadMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFileChooser fc = new JFileChooser();
+                fc.setDialogTitle("Загрузить причал");
+                if (fc.showSaveDialog(mainPanel) == JFileChooser.APPROVE_OPTION) {
+                    if (pierCollection.loadAllData(fc.getSelectedFile().getAbsolutePath())) {
+                        showDialog("Загрузка успешна");
+                    } else {
+                        showDialog("Загрузка не удалась");
+                    }
+                    pierListBox.setListData(pierCollection.getKeys());
+                }
+            }
+        });
+
+        saveSingleMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFileChooser fc = new JFileChooser();
+                fc.setDialogTitle("Сохранить причал");
+                if (fc.showSaveDialog(mainPanel) == JFileChooser.APPROVE_OPTION) {
+                    if (pierCollection.saveData(fc.getSelectedFile().getAbsolutePath(), ((String) pierListBox.getSelectedValue()))) {
+                        showDialog("Сохранение успешно");
+                    } else {
+                        showDialog("Сохранение не удалось");
+                    }
+                }
+            }
+        });
+
+        loadSIngleMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFileChooser fc = new JFileChooser();
+                fc.setDialogTitle("Загрузить причал");
+                if (fc.showSaveDialog(mainPanel) == JFileChooser.APPROVE_OPTION) {
+                    if (pierCollection.loadData(fc.getSelectedFile().getAbsolutePath())) {
+                        showDialog("Загрузка успешна");
+                    } else {
+                        showDialog("Загрузка не удалась");
+                    }
+                    pierListBox.setListData(pierCollection.getKeys());
+                }
+            }
+        });
     }
 
     private void showDialog(String text) {
@@ -229,6 +296,25 @@ public class PierDialog extends JFrame {
         panel2.add(pierListBox, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
         pierNameTextField = new JTextField();
         panel2.add(pierNameTextField, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JMenuBar menuBar1 = new JMenuBar();
+        menuBar1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        mainPanel.add(menuBar1, BorderLayout.NORTH);
+        final JMenu menu1 = new JMenu();
+        menu1.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        menu1.setText("Файл");
+        menuBar1.add(menu1, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        saveMenuItem = new JMenuItem();
+        saveMenuItem.setText("Сохранить");
+        menu1.add(saveMenuItem);
+        loadMenuItem = new JMenuItem();
+        loadMenuItem.setText("Загрузить");
+        menu1.add(loadMenuItem);
+        saveSingleMenuItem = new JMenuItem();
+        saveSingleMenuItem.setText("Сохранить парковку");
+        menu1.add(saveSingleMenuItem);
+        loadSIngleMenuItem = new JMenuItem();
+        loadSIngleMenuItem.setText("Загрузить парковку");
+        menu1.add(loadSIngleMenuItem);
     }
 
     /**

@@ -3,6 +3,8 @@ package lab1_bolkunov_java.Transport;
 import java.awt.*;
 
 public abstract class Vehicle implements ITransport {
+    protected static final char separator = ';';
+
     protected int posX;
 
     public int getPosX() {
