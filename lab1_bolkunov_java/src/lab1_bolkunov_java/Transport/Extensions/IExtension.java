@@ -7,7 +7,11 @@ import java.io.Serializable;
 
 public interface IExtension extends Serializable { //ИнтерДоп
 
+    final char separator = ';';
+
     void setExtensionCount(int count);
+
+    ExtensionCount getExtensionCount();
 
     void Draw(Graphics g, MotorShip transport);
 

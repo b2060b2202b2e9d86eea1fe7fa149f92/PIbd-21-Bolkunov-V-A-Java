@@ -27,6 +27,10 @@ public class PipesExtension implements IExtension //КлассДоп
         extensionCount = IExtension.convertIntToExtensionCount(count);
     }
 
+    public ExtensionCount getExtensionCount(){
+        return extensionCount;
+    }
+
     public void Draw(Graphics g, MotorShip transport) {
         if (extensionCount != null)
             for (int i = 0; i < IExtension.convertExtensionCountToInt(extensionCount) + 1; i++) {

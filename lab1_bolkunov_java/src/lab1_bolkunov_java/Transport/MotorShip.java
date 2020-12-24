@@ -43,6 +43,33 @@ public class MotorShip extends Ship {
         extension.setExtensionCount(count);
     }
 
+    public MotorShip(String str) {
+        super(str);
+
+        String[] params = str.split(Character.toString(separator));
+        this.additionalColor = new Color(Integer.parseInt(params[3]));
+        this.additionalBoat =  Boolean.parseBoolean(params[4]);
+        this.helicopterPad = Boolean.parseBoolean(params[5]);
+        this.smoke = Boolean.parseBoolean(params[6]);
+        this.fire = Boolean.parseBoolean(params[7]);
+
+        if(params.length > 8){
+            int count = Integer.parseInt(params[9]);
+            switch (params[8]){
+                case "SmallPipesExtension":
+                    setExtension(new SmallPipesExtension(count));
+                    break;
+                case "PipesExtension":
+                    setExtension(new PipesExtension(count));
+                    break;
+                case "HugePipesExtension":
+                    setExtension(new HugePipesExtension(count));
+                    break;
+
+            }
+        }
+    }
+
     public MotorShip(int maxSpeed, float weight, Color mainColor, Color additionalColor, boolean additionalBoat, boolean helipad, boolean smoke, boolean fire) {
         super(maxSpeed, weight, mainColor);
 
@@ -53,7 +80,7 @@ public class MotorShip extends Ship {
         this.fire = fire;
     }
 
-    public void setExtension(IExtension extension){
+    public void setExtension(IExtension extension) {
         this.extension = extension;
     }
 
@@ -97,7 +124,7 @@ public class MotorShip extends Ship {
         }
 
         //PIPES (WITH SMOKE), PATTERNS AND PILLARS
-        if(extension != null) {
+        if (extension != null) {
             extension.Draw(g, this);
         }
 
@@ -123,5 +150,20 @@ public class MotorShip extends Ship {
                         rad, rad, rnd.nextInt(360), rnd.nextInt(360));
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        String baseStr = super.toString() +
+                separator + Integer.toString(additionalColor.getRGB()) +
+                separator + Boolean.toString(additionalBoat) +
+                separator + Boolean.toString(helicopterPad) +
+                separator + Boolean.toString(smoke) +
+                separator + Boolean.toString(fire);
+        if (extension != null) {
+            baseStr += separator + extension.getClass().getSimpleName() +
+                    separator + IExtension.convertExtensionCountToInt(extension.getExtensionCount());
+        }
+        return baseStr;
     }
 }

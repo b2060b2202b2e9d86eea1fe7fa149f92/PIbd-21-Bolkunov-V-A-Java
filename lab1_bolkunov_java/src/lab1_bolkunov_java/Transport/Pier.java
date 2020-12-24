@@ -1,6 +1,5 @@
 package lab1_bolkunov_java.Transport;
 
-import jdk.jshell.spi.ExecutionControl;
 import lab1_bolkunov_java.Transport.Extensions.IExtension;
 
 import java.awt.*;
@@ -64,7 +63,7 @@ public class Pier<T1 extends ITransport, T2 extends IExtension> {
     }
 
     public T1 getTransport(int index) {
-        if(places.size() > index)
+        if (places.size() > index)
             return places.get(index);
         else
             return null;
@@ -88,5 +87,16 @@ public class Pier<T1 extends ITransport, T2 extends IExtension> {
             }
             g.drawLine(i * placeSizeWidth, 0, i * placeSizeWidth, (pictureHeight / placeSizeHeight) * placeSizeHeight);
         }
+    }
+
+    public T1 getElementAt(int index) {
+        if (index < 0 || index >= places.size()) {
+            return null;
+        }
+        return places.get(index);
+    }
+
+    public void clear(){
+        places.clear();
     }
 }
