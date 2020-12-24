@@ -15,13 +15,10 @@ public class ShipPanel extends JPanel {
     private final int gridColumnCount = 8;
     private JPanel[][] panelHolder;
 
-    private JButton createMotorShipButton;
     private JButton moveUpButton;
     private JButton moveDownButton;
     private JButton moveLeftButton;
     private JButton moveRightButton;
-    private JSpinner transportExtensionCountSpinner;
-    private JSpinner transportExtensionSpinner;
 
     private final String upButtonIconPath = "res/Up.png";
     private final String downButtonIconPath = "res/Down.png";
@@ -87,48 +84,8 @@ public class ShipPanel extends JPanel {
         });
         panelHolder[gridRowCount - 1][gridColumnCount - 1].add(moveRightButton);
 
-        //Крутилка для выбора улучшения
-        SpinnerListModel spinnerExtensionModel = new SpinnerListModel(new IExtension[] {new SmallPipesExtension(1), new PipesExtension(1), new HugePipesExtension(1)});
-        transportExtensionSpinner = new JSpinner(spinnerExtensionModel);
-        transportExtensionSpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent arg) {
-                if (transport instanceof MotorShip) {
-                    ((MotorShip) transport).setExtension(getCurrentSelectedExtension());
-                    ((MotorShip) transport).setExtensionCount(IExtension.convertExtensionCountToInt(getCurrentSelectedPipeCount()));
-                    repaint();
-                }
-            }
-        });
-        transportExtensionSpinner.setEnabled(false);
-        transportExtensionSpinner.setPreferredSize(new Dimension(80,20));
-        panelHolder[0][gridColumnCount - 1].add(transportExtensionSpinner);
-
-        //Крутилка для выбора кол-ва
-        SpinnerListModel spinnerCountModel = new SpinnerListModel(ExtensionCount.values());
-        transportExtensionCountSpinner = new JSpinner(spinnerCountModel);
-        transportExtensionCountSpinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent arg) {
-                if (transport instanceof MotorShip) {
-                    ((MotorShip) transport).setExtensionCount(IExtension.convertExtensionCountToInt(getCurrentSelectedPipeCount()));
-                    repaint();
-                }
-            }
-        });
-        transportExtensionCountSpinner.setEnabled(false);
-        transportExtensionCountSpinner.setPreferredSize(new Dimension(80,20));
-        panelHolder[1][gridColumnCount - 1].add(transportExtensionCountSpinner);
     }
-
-    private ExtensionCount getCurrentSelectedPipeCount() {
-        return (ExtensionCount) transportExtensionCountSpinner.getValue();
-    }
-
-    private IExtension getCurrentSelectedExtension() {
-        return (IExtension) transportExtensionSpinner.getValue();
-    }
-
+    
     private ImageIcon getScaledImageIcon(String path) {
         int newWidth = 40, newHeight = 40;
         ImageIcon icon = new ImageIcon(path);
@@ -141,27 +98,9 @@ public class ShipPanel extends JPanel {
         this.repaint();
     }
 
-    private void createShip() {
-        transport = new Ship(100 + rnd.nextInt(200), 1000 + rnd.nextInt(1000), Color.pink);
-        transport.setPosition(200 + rnd.nextInt(100), 200 + rnd.nextInt(100), this.getWidth(), this.getHeight());
-        this.repaint();
-    }
-
-    private void createMotorShip() {
-        transport = new MotorShip(100 + rnd.nextInt(200), 1000 + rnd.nextInt(1000), Color.pink, Color.cyan, true, true, true, true);
-        transport.setPosition(200 + rnd.nextInt(100), 200 + rnd.nextInt(100), this.getWidth(), this.getHeight());
-        ((MotorShip) transport).setExtension(getCurrentSelectedExtension());
-        ((MotorShip) transport).setExtensionCount(IExtension.convertExtensionCountToInt(getCurrentSelectedPipeCount()));
-        this.repaint();
-    }
-
     public void setShip(ITransport ship){
         this.transport = ship;
         transport.setPosition(200 + rnd.nextInt(100), 200 + rnd.nextInt(100), this.getWidth(), this.getHeight());
-        if(transport instanceof MotorShip){
-            ((MotorShip) transport).setExtension(getCurrentSelectedExtension());
-            ((MotorShip) transport).setExtensionCount(IExtension.convertExtensionCountToInt(getCurrentSelectedPipeCount()));
-        }
         this.repaint();
     }
 
@@ -170,13 +109,6 @@ public class ShipPanel extends JPanel {
         super.paint(g);
         if (transport != null) {
             transport.drawTransport(g);
-            if(transport instanceof MotorShip){
-                transportExtensionCountSpinner.setEnabled(true);
-                transportExtensionSpinner.setEnabled(true);
-            }else{
-                transportExtensionCountSpinner.setEnabled(false);
-                transportExtensionSpinner.setEnabled(false);
-            }
         }
     }
 }

@@ -3,9 +3,9 @@ package lab1_bolkunov_java.Transport.Extensions;
 import lab1_bolkunov_java.Transport.MotorShip;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public interface IExtension //ИнтерДоп
-{
+public interface IExtension extends Serializable { //ИнтерДоп
 
     void setExtensionCount(int count);
 
